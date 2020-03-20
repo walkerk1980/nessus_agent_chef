@@ -91,6 +91,10 @@ rpm_package 'install_nessus-agent' do
   action :upgrade
 end
 
+service 'nessusagent' do
+  action [:start]
+end
+
 link_command = '/opt/nessus_agent/sbin/nessuscli agent link --key=' + linking_key
 link_command += ' --name='
 link_command += agent_name 
