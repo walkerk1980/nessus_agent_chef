@@ -43,6 +43,7 @@ end
 gpg_key_length = '2048'
 
 nessus_api_url = 'https://www.tenable.com/downloads/api/v1/public/pages/nessus-agents'
+agreement_query_string = '?i_agree_to_tenable_license_agreement=true'
 
 yum_dependencies_list = ['jq']
 
@@ -51,18 +52,18 @@ yum_package 'yum_dependencies' do
   action :upgrade
 end
 
-find_agent_download_id_command = 'curl -s ' + nessus_api_url + '|jq \'.downloads[]|select(.file |contains("' + architecture + '"))| select(.file |contains("' + operating_system_name + '"))| .id\''
+find_agent_download_id_command = 'curl -s ' + nessus_api_url + agreement_query_string + '|jq \'.downloads[]|select(.file |contains("' + architecture + '"))| select(.file |contains("' + operating_system_name + '"))| .id\''
 find_agent_download_id = Mixlib::ShellOut.new(find_agent_download_id_command)
 find_agent_download_id.run_command
 agent_tenable_download_id = find_agent_download_id.stdout.strip
 
 
-find_gpg_download_id_command = 'curl -s ' + nessus_api_url + '|jq \'.downloads[]|select(.file |contains("gpg"))| select(.file |contains("' + gpg_key_length + '"))| .id\''
+find_gpg_download_id_command = 'curl -s ' + nessus_api_url + agreement_query_string + '|jq \'.downloads[]|select(.file |contains("gpg"))| select(.file |contains("' + gpg_key_length + '"))| .id\''
 find_gpg_download_id = Mixlib::ShellOut.new(find_gpg_download_id_command)
 find_gpg_download_id.run_command
 gpg_key_tenable_download_id = find_gpg_download_id.stdout.strip
 
-gpg_key_url = nessus_api_url + '/downloads/' + gpg_key_tenable_download_id + '/download?i_agree_to_tenable_license_agreement=true'
+gpg_key_url = nessus_api_url + '/downloads/' + gpg_key_tenable_download_id + agreement_query_string
 
 working_dir='/tmp/'
 
@@ -76,7 +77,7 @@ execute 'install_gpg_key' do
   command 'rpm --import ' + working_dir + 'tenable-2048.gpg'
 end
 
-nessus_agent_url = nessus_api_url + '/downloads/' + agent_tenable_download_id + '/download?i_agree_to_tenable_license_agreement=true'
+nessus_agent_url = nessus_api_url + '/downloads/' + agent_tenable_download_id + agreement_query_string
 
 execute 'download_nessus_agent' do
   command 'wget -O nessus_agent_latest.rpm ' + nessus_agent_url
