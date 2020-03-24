@@ -63,7 +63,7 @@ find_gpg_download_id = Mixlib::ShellOut.new(find_gpg_download_id_command)
 find_gpg_download_id.run_command
 gpg_key_tenable_download_id = find_gpg_download_id.stdout.strip
 
-gpg_key_url = nessus_api_url + '/downloads/' + gpg_key_tenable_download_id + agreement_query_string
+gpg_key_url = nessus_api_url + '/downloads/' + gpg_key_tenable_download_id + '/download' + agreement_query_string
 
 working_dir='/tmp/'
 
@@ -77,7 +77,7 @@ execute 'install_gpg_key' do
   command 'rpm --import ' + working_dir + 'tenable-2048.gpg'
 end
 
-nessus_agent_url = nessus_api_url + '/downloads/' + agent_tenable_download_id + agreement_query_string
+nessus_agent_url = nessus_api_url + '/downloads/' + agent_tenable_download_id + '/download' + agreement_query_string
 
 execute 'download_nessus_agent' do
   command 'wget -O nessus_agent_latest.rpm ' + nessus_agent_url
