@@ -106,5 +106,5 @@ link_command += ' --cloud'
 
 execute 'activate_nessus_agent' do
   command link_command
-  #not_if '/opt/nessus_agent/sbin/nessuscli agent status'
+  not_if '/opt/nessus_agent/sbin/nessuscli agent status'
 end
